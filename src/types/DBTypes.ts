@@ -1,10 +1,10 @@
 import {Document, Types} from 'mongoose';
-import {Point} from 'geojson';
 
 type User = Partial<Document> & {
   id: Types.ObjectId | string;
   user_name: string;
   email: string;
+  organization: string;
   role: 'user' | 'admin';
   password: string;
 };
@@ -23,39 +23,4 @@ type TokenContent = {
   user: LoginUser;
 };
 
-type Cat = Partial<Document> & {
-  id?: Types.ObjectId | string;
-  cat_name: string;
-  weight: number;
-  owner: Types.ObjectId | User;
-  filename: string;
-  birthdate: Date;
-  location: Point;
-};
-
-type CatTest = Partial<Cat>;
-
-// *** db location query
-type Location = {
-  lat: number;
-  lng: number;
-};
-
-type LocationInput = {
-  topRight: Location;
-  bottomLeft: Location;
-};
-// ***
-
-export {
-  User,
-  UserOutput,
-  UserInput,
-  UserTest,
-  LoginUser,
-  Cat,
-  CatTest,
-  TokenContent,
-  Location,
-  LocationInput,
-};
+export {User, UserOutput, UserInput, UserTest, LoginUser, TokenContent};

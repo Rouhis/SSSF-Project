@@ -2,6 +2,7 @@ type User {
   id: ID!
   user_name: String!
   email: String!
+  organization: String!
 }
 
 type LoginResponse {
@@ -24,12 +25,14 @@ input UserInput {
   user_name: String!
   email: String!
   password: String!
+  organization: String!
 }
 
 input UserModify {
   user_name: String
   email: String
   password: String
+  organization: String
 }
 
 type Query {
@@ -45,7 +48,8 @@ type UserDeleteResponse {
 
 type Mutation {
   login(credentials: Credentials!): LoginResponse
-  register(user: UserInput!): UserResponse
+  registerEmployee(user: UserInput!): UserResponse
+  registerFaciltyManager(user: UserInput!): UserResponse
   updateUser(user: UserModify!): UserResponse
   deleteUser: UserDeleteResponse
   """

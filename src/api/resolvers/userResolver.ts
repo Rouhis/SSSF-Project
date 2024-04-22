@@ -59,7 +59,7 @@ export default {
     },
   },
   Mutation: {
-    register: async (
+    registerEmployee: async (
       _parent: undefined,
       args: {user: Omit<User, 'role'>},
     ): Promise<{user: UserOutput; message: string}> => {
@@ -82,6 +82,43 @@ export default {
 
       if (!registerResponse.data || !registerResponse.data._id) {
         throw new GraphQLError('User registration failed');
+      }
+
+      return {
+        user: {...registerResponse.data, id: registerResponse.data._id},
+        message: registerResponse.message,
+      };
+    },
+    registerFaciltyManager: async (
+      _parent: undefined,
+      args: {user: Omit<User, 'role'>},
+      context: MyContext,
+    ): Promise<{user: UserOutput; message: string}> => {
+      if (!process.env.AUTH_URL) {
+        throw new GraphQLError('Auth URL not set in .env file');
+      }
+
+      // Check if the user is an admin
+      if (context.userdata?.role !== 'admin') {
+        throw new GraphQLError('Only admins can create facility managers');
+      }
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${context.userdata?.token}`,
+        },
+        body: JSON.stringify(args.user),
+      };
+
+      const registerResponse = await fetchData<MessageResponse & {data: User}>(
+        process.env.AUTH_URL + '/users',
+        options,
+      );
+
+      if (!registerResponse.data || !registerResponse.data._id) {
+        throw new GraphQLError('Facility manager registration failed');
       }
 
       return {
