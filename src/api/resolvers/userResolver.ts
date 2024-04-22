@@ -3,7 +3,6 @@ import {User, UserOutput} from '../../types/DBTypes';
 import fetchData from '../../functions/fetchData';
 import {MessageResponse} from '../../types/MessageTypes';
 import {MyContext} from '../../types/MyContext';
-import { cp } from 'fs';
 import * as Randomstring from 'randomstring';
 
 // TODO: create resolvers based on user.graphql
