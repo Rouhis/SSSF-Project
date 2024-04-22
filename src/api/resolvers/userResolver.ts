@@ -3,6 +3,8 @@ import {User, UserOutput} from '../../types/DBTypes';
 import fetchData from '../../functions/fetchData';
 import {MessageResponse} from '../../types/MessageTypes';
 import {MyContext} from '../../types/MyContext';
+import { cp } from 'fs';
+import * as Randomstring from 'randomstring';
 
 // TODO: create resolvers based on user.graphql
 // note: when updating or deleting a user don't send id to the auth server, it will get it from the token. So token needs to be sent with the request to the auth server
@@ -66,6 +68,9 @@ export default {
       if (!process.env.AUTH_URL) {
         throw new GraphQLError('Auth URL not set in .env file');
       }
+      const password = Randomstring.generate(10);
+      console.log('Password for testing:', password);
+      args.user.password = password;
       const options = {
         method: 'POST',
         headers: {
@@ -102,7 +107,9 @@ export default {
       if (context.userdata?.role !== 'admin') {
         throw new GraphQLError('Only admins can create facility managers');
       }
-
+      const password = Randomstring.generate(10);
+      console.log('Password for testing:', password);
+      args.user.password = password;
       const options = {
         method: 'POST',
         headers: {

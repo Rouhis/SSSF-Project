@@ -5,6 +5,14 @@ type User {
   organization: String!
 }
 
+type AddedUser {
+  id: ID!
+  user_name: String!
+  email: String!
+  organization: String!
+  password: String!
+}
+
 type LoginResponse {
   token: String
   message: String!
@@ -16,6 +24,11 @@ type UserResponse {
   user: User!
 }
 
+type AddedUserResponse {
+  message: String!
+  user: AddedUser!
+}
+
 input Credentials {
   username: String!
   password: String!
@@ -24,7 +37,6 @@ input Credentials {
 input UserInput {
   user_name: String!
   email: String!
-  password: String!
   organization: String!
 }
 
@@ -48,8 +60,8 @@ type UserDeleteResponse {
 
 type Mutation {
   login(credentials: Credentials!): LoginResponse
-  registerEmployee(user: UserInput!): UserResponse
-  registerFaciltyManager(user: UserInput!): UserResponse
+  registerEmployee(user: UserInput!): AddedUserResponse
+  registerFaciltyManager(user: UserInput!): AddedUserResponse
   updateUser(user: UserModify!): UserResponse
   deleteUser: UserDeleteResponse
   """
