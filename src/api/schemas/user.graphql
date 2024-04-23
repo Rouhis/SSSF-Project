@@ -10,7 +10,6 @@ type AddedUser {
   user_name: String!
   email: String!
   organization: String!
-  password: String!
 }
 
 type LoginResponse {
@@ -40,6 +39,13 @@ input UserInput {
   organization: String!
 }
 
+input UserInputTests {
+  user_name: String!
+  email: String!
+  organization: String!
+  password: String!
+}
+
 input UserModify {
   user_name: String
   email: String
@@ -65,12 +71,7 @@ type Mutation {
   registerFaciltyManager(user: UserInput!): AddedUserResponse
   updateUser(user: UserModify!): UserResponse
   deleteUser: UserDeleteResponse
-  """
-  Separate mutations for admin because of rest api
-  """
+  registerTestUser(user: UserInputTests!): AddedUserResponse
   updateUserAsAdmin(user: UserModify!, id: ID!): UserResponse
-  """
-  Separate mutations for admin because of rest api
-  """
   deleteUserAsAdmin(id: ID!): UserDeleteResponse
 }

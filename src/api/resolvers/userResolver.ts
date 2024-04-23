@@ -79,6 +79,36 @@ export default {
     },
   },
   Mutation: {
+    registerTestUser: async (
+      _parent: undefined,
+      args: {user: Omit<User, 'role'>},
+    ): Promise<{user: UserOutput; message: string}> => {
+      if (!process.env.AUTH_URL) {
+        throw new GraphQLError('Auth URL not set in .env file');
+      }
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(args.user),
+      };
+      console.log('args.user:', args.user);
+      const registerResponse = await fetchData<MessageResponse & {data: User}>(
+        process.env.AUTH_URL + '/users',
+        options,
+      );
+      console.log('registerResponse:', registerResponse);
+
+      if (!registerResponse.data || !registerResponse.data._id) {
+        throw new GraphQLError('User registration failed');
+      }
+
+      return {
+        user: {...registerResponse.data, id: registerResponse.data._id},
+        message: registerResponse.message,
+      };
+    },
     registerEmployee: async (
       _parent: undefined,
       args: {user: Omit<User, 'role'>},
