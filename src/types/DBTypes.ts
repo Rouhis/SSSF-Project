@@ -5,7 +5,7 @@ type User = Partial<Document> & {
   user_name: string;
   email: string;
   organization: string;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'manager';
   password: string;
 };
 
@@ -21,6 +21,7 @@ type TokenContent = {
   role: string;
   token: string;
   user: LoginUser;
+  orgazination: string;
 };
 
 export {User, UserOutput, UserInput, UserTest, LoginUser, TokenContent};

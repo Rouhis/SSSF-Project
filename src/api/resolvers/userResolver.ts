@@ -34,6 +34,25 @@ export default {
         return user;
       });
     },
+    usersByOrganization: async (
+      _parent: undefined,
+      args: {organization: string},
+    ): Promise<UserOutput[]> => {
+      if (!process.env.AUTH_URL) {
+        throw new GraphQLError('Auth server URL not found');
+      }
+      const users = await fetchData<User[]>(process.env.AUTH_URL + '/users');
+
+      // Filter users by organization
+      const filteredUsers = users.filter(
+        (user) => user.organization === args.organization,
+      );
+
+      return filteredUsers.map((user) => {
+        user.id = user._id;
+        return user;
+      });
+    },
     userById: async (
       _parent: undefined,
       args: {id: string},
@@ -95,7 +114,7 @@ export default {
     },
     registerFaciltyManager: async (
       _parent: undefined,
-      args: {user: Omit<User, 'role'>},
+      args: {user: User},
       context: MyContext,
     ): Promise<{user: UserOutput; message: string}> => {
       if (!process.env.AUTH_URL) {
@@ -109,6 +128,7 @@ export default {
       const password = Randomstring.generate(10);
       console.log('Password for testing:', password);
       args.user.password = password;
+      args.user.role = 'manager';
       const options = {
         method: 'POST',
         headers: {
@@ -228,8 +248,9 @@ export default {
       }
 
       // Check if the user is authenticated
-      if (!context.userdata) {
-        throw new GraphQLError('User not authenticated');
+      // Check if the user is an admin
+      if (context.userdata?.role !== 'manager') {
+        throw new GraphQLError('Only admins can delete other users');
       }
 
       // Fetch the user before deleting

@@ -30,6 +30,7 @@ export default async (req: Request): Promise<MyContext> => {
         role: userFromToken.role,
         token: token,
         user: userFromToken,
+        orgazination: userFromToken.organization,
       };
 
       // console.log('user from token', userdata);

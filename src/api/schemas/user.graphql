@@ -51,6 +51,7 @@ type Query {
   users: [User]
   userById(id: ID!): User
   checkToken: UserResponse
+  usersByOrganization(organization: String): [User]
 }
 
 type UserDeleteResponse {
