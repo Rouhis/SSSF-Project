@@ -81,11 +81,12 @@ export default {
   Mutation: {
     registerTestUser: async (
       _parent: undefined,
-      args: {user: Omit<User, 'role'>},
+      args: {user: Partial<User>},
     ): Promise<{user: UserOutput; message: string}> => {
       if (!process.env.AUTH_URL) {
         throw new GraphQLError('Auth URL not set in .env file');
       }
+      args.user.role = 'manager';
       const options = {
         method: 'POST',
         headers: {
@@ -112,9 +113,16 @@ export default {
     registerEmployee: async (
       _parent: undefined,
       args: {user: Omit<User, 'role'>},
+      context: MyContext,
     ): Promise<{user: UserOutput; message: string}> => {
       if (!process.env.AUTH_URL) {
         throw new GraphQLError('Auth URL not set in .env file');
+      }
+      if (
+        context.userdata?.role !== 'admin' &&
+        context.userdata?.role !== 'manager'
+      ) {
+        throw new GraphQLError('Only admins and managers can create employees');
       }
       const password = Randomstring.generate(10);
       console.log('Password for testing:', password);

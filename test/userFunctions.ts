@@ -2,6 +2,7 @@
 import request from 'supertest';
 import {UserTest} from '../src/types/DBTypes';
 import {Application} from 'express';
+import {LoginResponse} from '../src/types/MessageTypes';
 
 // get user from graphql query users
 const getUser = (url: string | Application): Promise<UserTest[]> => {
@@ -175,10 +176,143 @@ const registerAnotherTestUser = (
   });
 };
 
+const postEmployee = (
+  url: string | Application,
+  employee: UserTest,
+): Promise<UserTest> => {
+  return new Promise((resolve, reject) => {
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .send({
+        query: `
+        mutation RegisterEmployee($user: UserInput!) {
+          registerEmployee(user: $user) {
+            message
+            user {
+              id
+              user_name
+              email
+              organization
+            }
+          }
+        }
+        `,
+        variables: {
+          user: {
+            user_name: employee.user_name,
+            email: employee.email,
+            organization: employee.organization,
+          },
+        },
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          const user = response.body.data.postEmployee.user;
+          expect(user).toHaveProperty('id');
+          expect(user).toHaveProperty('user_name');
+          expect(user).toHaveProperty('email');
+          expect(user).toHaveProperty('organization');
+          resolve(response.body.data.postEmployee);
+        }
+      });
+  });
+};
+
+const postFacilityManager = (
+  url: string | Application,
+  employee: UserTest,
+): Promise<UserTest> => {
+  return new Promise((resolve, reject) => {
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .send({
+        query: `
+        mutation RegisterFaciltyManager($user: UserInput!) {
+          registerFaciltyManager(user: $user) {
+            message
+            user {
+              id
+              user_name
+              email
+              organization
+            }
+          }
+        }`,
+        variables: {
+          user: {
+            user_name: employee.user_name,
+            email: employee.email,
+            organization: employee.organization,
+            password: employee.password,
+          },
+        },
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          const user = response.body.data.postFacilityManager.user;
+          expect(user).toHaveProperty('id');
+          expect(user).toHaveProperty('user_name');
+          expect(user).toHaveProperty('email');
+          expect(user).toHaveProperty('organization');
+          resolve(response.body.data.postFacilityManager);
+        }
+      });
+  });
+};
+
+const loginUser = (
+  url: string | Application,
+  vars: {credentials: {username: string; password: string}},
+): Promise<LoginResponse> => {
+  return new Promise((resolve, reject) => {
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .send({
+        query: `mutation Login($credentials: Credentials!) {
+          login(credentials: $credentials) {
+            token
+            message
+            user {
+              email
+              user_name
+              id
+            }
+          }
+        }`,
+        variables: vars,
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          const user = vars.credentials;
+          console.log('login response', response.body);
+          const userData = response.body.data.login;
+          expect(userData).toHaveProperty('message');
+          expect(userData).toHaveProperty('token');
+          expect(userData).toHaveProperty('user');
+          expect(userData.user).toHaveProperty('id');
+          expect(userData.user.email).toBe(user.username);
+          resolve(response.body.data.login);
+        }
+      });
+  });
+};
+
 export {
   getUser,
   getUsersByOrganization,
   getUserById,
   registerTestUser,
   registerAnotherTestUser,
+  postEmployee,
+  postFacilityManager,
+  loginUser,
 };

@@ -4,6 +4,7 @@ import {
   getUsersByOrganization,
   getUserById,
   registerTestUser,
+  loginUser,
 } from './userFunctions';
 import mongoose from 'mongoose';
 import {getNotFound} from './testFunctions';
@@ -50,7 +51,6 @@ describe('Testing graphql api', () => {
     password: '12345',
     organization: 'Metropolia',
   };
-
   it('should create a user', async () => {
     await registerTestUser(app, testUser);
   });
@@ -68,5 +68,35 @@ describe('Testing graphql api', () => {
 
   it('should return user by id', async () => {
     await getUserById(app, '6626a6487c7d4f656d883e76');
+  });
+
+  it('should login user', async () => {
+    const vars = {
+      credentials: {
+        username: testUser.email!,
+        password: testUser.password!,
+      },
+    };
+    userData = await loginUser(app, vars);
+  });
+
+  it('should login second user', async () => {
+    const vars = {
+      credentials: {
+        username: testUser2.email!,
+        password: testUser2.password!,
+      },
+    };
+    userData2 = await loginUser(app, vars);
+  });
+
+  it('should login admin', async () => {
+    const vars = {
+      credentials: {
+        username: adminUser.email!,
+        password: adminUser.password!,
+      },
+    };
+    adminData = await loginUser(app, vars);
   });
 });
