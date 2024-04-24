@@ -1,3 +1,3 @@
 import userReslover from './userResolver';
-
-export default [userReslover];
+import organizationResolver from './organizationResolver';
+export default [userReslover, organizationResolver];

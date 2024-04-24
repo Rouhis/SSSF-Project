@@ -16,7 +16,8 @@ import {getNotFound} from './testFunctions';
 import randomstring from 'randomstring';
 import jwt from 'jsonwebtoken';
 import {LoginResponse} from '../src/types/MessageTypes';
-import {UserTest} from '../src/types/DBTypes';
+import {OrganizationTest, UserTest} from '../src/types/DBTypes';
+import {getAllOrganizations, postOrganization} from './organizationFunctions';
 
 describe('Testing graphql api', () => {
   beforeAll(async () => {
@@ -64,17 +65,25 @@ describe('Testing graphql api', () => {
     email: randomstring.generate(9) + '@facility.fi',
     organization: 'Metropolia',
   };
+
   const adminUser: UserTest = {
     email: 'admin@metropolia.fi',
     password: '12345',
     organization: 'Metropolia',
   };
+
+  const testOrganization: OrganizationTest = {
+    organization_name: 'Metropolia' + randomstring.generate(5),
+  };
+
   it('should create a user', async () => {
     await registerTestUser(app, testUser);
   });
+
   it('should create another user', async () => {
     await registerTestUser(app, testUser2);
   });
+
   it('should login user', async () => {
     const vars = {
       credentials: {
@@ -84,7 +93,7 @@ describe('Testing graphql api', () => {
     };
     userData = await loginUser(app, vars);
   });
-  // test get all users
+
   it('should return array of users', async () => {
     await getUser(app);
   });
@@ -116,6 +125,7 @@ describe('Testing graphql api', () => {
     };
     adminData = await loginUser(app, vars);
   });
+
   it('should add a facility manager', async () => {
     await postFacilityManager(app, facilityManager, adminData.token);
   });
@@ -134,9 +144,17 @@ describe('Testing graphql api', () => {
     await postEmployee(app, facilityManagerData.token, testUser3);
   });
 
+  it('should create an organiztion', async () => {
+    await postOrganization(app, testOrganization, adminData.token);
+  });
+
+  it('sghould get all organizations', async () => {
+    await getAllOrganizations(app);
+  });
   it('should delete user', async () => {
     await deleteUser(app, userData2.user.id, facilityManagerData.token);
   });
+
   it('should delete user as admin', async () => {
     await deleteUserAsAdmin(app, userData.user.id, adminData.token);
   });

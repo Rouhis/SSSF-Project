@@ -17,6 +17,8 @@ type UserTest = Partial<User>;
 
 type LoginUser = Omit<User, 'password'>;
 
+type OrganizationTest = Partial<Organization>;
+
 type TokenContent = {
   role: string;
   token: string;
@@ -24,4 +26,18 @@ type TokenContent = {
   orgazination: string;
 };
 
-export {User, UserOutput, UserInput, UserTest, LoginUser, TokenContent};
+type Organization = {
+  id: Types.ObjectId | string;
+  organization_name: string;
+};
+
+export {
+  User,
+  UserOutput,
+  UserInput,
+  UserTest,
+  LoginUser,
+  TokenContent,
+  Organization,
+  OrganizationTest,
+};

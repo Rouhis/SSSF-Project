@@ -1,0 +1,30 @@
+
+type Organization{
+    id: ID!
+    organization_name: String!
+    users: [User]
+}
+
+type OrganizationMessage{
+    message: String!
+    organization: Organization!
+}
+
+input OrganizationInput{
+    organization_name: String!
+}
+
+input OrganizationModify{
+    organization_name: String
+}
+
+type Query{
+    organizations: [Organization]
+    organizationById(id: ID!): Organization
+}
+
+type Mutation{
+    addOrganization(organization: OrganizationInput): OrganizationMessage
+    modifyOrganization(id: ID!, organization: OrganizationModify): OrganizationMessage
+    deleteOrganization(id: ID!): OrganizationMessage
+}
