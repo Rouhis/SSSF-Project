@@ -10,19 +10,6 @@ import * as Randomstring from 'randomstring';
 // note2: when updating or deleting a user as admin, you need to send user id (dont delete admin btw) and also check if the user is an admin by checking the role from the user object form context
 
 export default {
-  /*
-  Cat: {
-    owner: async (parent: Cat): Promise<UserOutput> => {
-      if (!process.env.AUTH_URL) {
-        throw new GraphQLError('Auth server URL not found');
-      }
-      const user = await fetchData<User>(
-        process.env.AUTH_URL + '/users/' + parent.owner,
-      );
-      user.id = user._id;
-      return user;
-    },
-  },*/
   Query: {
     users: async (): Promise<UserOutput[]> => {
       if (!process.env.AUTH_URL) {

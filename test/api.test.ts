@@ -15,9 +15,13 @@ import mongoose from 'mongoose';
 import {getNotFound} from './testFunctions';
 import randomstring from 'randomstring';
 import jwt from 'jsonwebtoken';
-import {LoginResponse} from '../src/types/MessageTypes';
-import {OrganizationTest, UserTest} from '../src/types/DBTypes';
-import {getAllOrganizations, postOrganization} from './organizationFunctions';
+import {LoginResponse, OrganizationResponse} from '../src/types/MessageTypes';
+import {Organization, OrganizationTest, UserTest} from '../src/types/DBTypes';
+import {
+  getAllOrganizations,
+  modifyOrganization,
+  postOrganization,
+} from './organizationFunctions';
 
 describe('Testing graphql api', () => {
   beforeAll(async () => {
@@ -38,7 +42,7 @@ describe('Testing graphql api', () => {
   let userData2: LoginResponse;
   let adminData: LoginResponse;
   let facilityManagerData: LoginResponse;
-
+  let organizationData: OrganizationResponse;
   const testUser: UserTest = {
     user_name: 'Test User ' + randomstring.generate(7),
     email: randomstring.generate(9) + '@user.fi',
@@ -144,13 +148,26 @@ describe('Testing graphql api', () => {
     await postEmployee(app, facilityManagerData.token, testUser3);
   });
 
-  it('should create an organiztion', async () => {
-    await postOrganization(app, testOrganization, adminData.token);
+  it('should create an organization', async () => {
+    organizationData = (await postOrganization(
+      app,
+      testOrganization,
+      adminData.token,
+    )) as OrganizationResponse;
   });
 
-  it('sghould get all organizations', async () => {
+  it('should get all organizations', async () => {
     await getAllOrganizations(app);
   });
+
+  it('should modify organization', async () => {
+    await modifyOrganization(
+      app,
+      organizationData.organization as Partial<Organization>,
+      adminData.token,
+    );
+  });
+
   it('should delete user', async () => {
     await deleteUser(app, userData2.user.id, facilityManagerData.token);
   });

@@ -19,6 +19,8 @@ type LoginUser = Omit<User, 'password'>;
 
 type OrganizationTest = Partial<Organization>;
 
+type OrganizationOutPut = Partial<Organization>;
+
 type TokenContent = {
   role: string;
   token: string;
@@ -40,4 +42,5 @@ export {
   TokenContent,
   Organization,
   OrganizationTest,
+  OrganizationOutPut,
 };

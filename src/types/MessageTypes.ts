@@ -1,5 +1,5 @@
 import {Point} from 'geojson';
-import {UserOutput} from './DBTypes';
+import {OrganizationOutPut, UserOutput} from './DBTypes';
 
 type MessageResponse = {
   message: string;
@@ -25,10 +25,15 @@ type UploadResponse = MessageResponse & {
   };
 };
 
+type OrganizationResponse = {
+  organization: OrganizationOutPut;
+};
+
 export {
   MessageResponse,
   ErrorResponse,
   UserResponse,
   LoginResponse,
   UploadResponse,
+  OrganizationResponse,
 };

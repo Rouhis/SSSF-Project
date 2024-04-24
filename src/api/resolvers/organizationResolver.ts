@@ -37,5 +37,22 @@ export default {
       await newOrganization.save();
       return {message: 'Organization added', organization: newOrganization};
     },
+    modifyOrganization: async (
+      _parent: undefined,
+      args: {organization: Organization; id: string},
+      context: MyContext,
+    ): Promise<{organization: Organization; message: string}> => {
+      if (context.userdata?.role !== 'admin') {
+        throw new GraphQLError('Unauthorized');
+      }
+      console.log('args', args);
+      const organization = await organizationModel.findById(args.id);
+      if (!organization) {
+        throw new GraphQLError('Organization not found');
+      }
+      organization.organization_name = args.organization.organization_name;
+      await organization.save();
+      return {message: 'Organization modified', organization: organization};
+    },
   },
 };
