@@ -9,7 +9,9 @@ type OrganizationMessage{
     message: String!
     organization: Organization!
 }
-
+type OrganizationDeleteResponse{
+    message: String!
+}
 input OrganizationInput{
     organization_name: String!
 }
@@ -26,5 +28,5 @@ type Query{
 type Mutation{
     addOrganization(organization: OrganizationInput): OrganizationMessage
     modifyOrganization(id: ID!, organization: OrganizationModify): OrganizationMessage
-    deleteOrganization(id: ID!): OrganizationMessage
+    deleteOrganization(id: ID!): OrganizationDeleteResponse
 }

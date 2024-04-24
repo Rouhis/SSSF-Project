@@ -54,5 +54,20 @@ export default {
       await organization.save();
       return {message: 'Organization modified', organization: organization};
     },
+    deleteOrganization: async (
+      _parent: undefined,
+      args: {id: string},
+      context: MyContext,
+    ): Promise<{message: string}> => {
+      if (context.userdata?.role !== 'admin') {
+        throw new GraphQLError('Unauthorized');
+      }
+      const organization = await organizationModel.findByIdAndDelete(args.id);
+      if (organization) {
+        return {message: 'Organization deleted'};
+      } else {
+        return {message: 'Organization not deleted'};
+      }
+    },
   },
 };

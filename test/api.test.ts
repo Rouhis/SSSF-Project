@@ -18,6 +18,7 @@ import jwt from 'jsonwebtoken';
 import {LoginResponse, OrganizationResponse} from '../src/types/MessageTypes';
 import {Organization, OrganizationTest, UserTest} from '../src/types/DBTypes';
 import {
+  deleteOrganization,
   getAllOrganizations,
   modifyOrganization,
   postOrganization,
@@ -167,7 +168,13 @@ describe('Testing graphql api', () => {
       adminData.token,
     );
   });
-
+  it('should delete organization', async () => {
+    await deleteOrganization(
+      app,
+      organizationData.organization as Partial<Organization>,
+      adminData.token,
+    );
+  });
   it('should delete user', async () => {
     await deleteUser(app, userData2.user.id, facilityManagerData.token);
   });

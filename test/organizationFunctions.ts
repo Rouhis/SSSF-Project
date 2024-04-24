@@ -112,4 +112,44 @@ const modifyOrganization = (
   });
 };
 
-export {postOrganization, getAllOrganizations, modifyOrganization};
+const deleteOrganization = (
+  url: string | Application,
+  organization: OrganizationTest,
+  token: string,
+) => {
+  return new Promise((resolve, reject) => {
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        query: `
+            mutation Mutation($deleteOrganizationId: ID!) {
+                deleteOrganization(id: $deleteOrganizationId) {
+                  message
+                }
+              }`,
+        variables: {
+          deleteOrganizationId: organization.id,
+        },
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log('delete', response.body);
+          expect(response.body.data.deleteOrganization).toHaveProperty(
+            'message',
+          );
+          resolve(response.body.data.deleteOrganization);
+        }
+      });
+  });
+};
+
+export {
+  postOrganization,
+  getAllOrganizations,
+  modifyOrganization,
+  deleteOrganization,
+};
