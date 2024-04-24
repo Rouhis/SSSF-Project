@@ -112,7 +112,7 @@ export default {
     },
     registerEmployee: async (
       _parent: undefined,
-      args: {user: Omit<User, 'role'>},
+      args: {user: Partial<User>},
       context: MyContext,
     ): Promise<{user: UserOutput; message: string}> => {
       if (!process.env.AUTH_URL) {
@@ -127,6 +127,7 @@ export default {
       const password = Randomstring.generate(10);
       console.log('Password for testing:', password);
       args.user.password = password;
+      args.user.role = 'user';
       const options = {
         method: 'POST',
         headers: {

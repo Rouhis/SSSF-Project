@@ -130,63 +130,19 @@ const registerTestUser = (
   });
 };
 
-// Register another test user from graphql mutation registerAnotherTestUser test
-const registerAnotherTestUser = (
-  url: string | Application,
-  employee: UserTest,
-): Promise<UserTest> => {
-  return new Promise((resolve, reject) => {
-    request(url)
-      .post('/graphql')
-      .set('Content-type', 'application/json')
-      .send({
-        query: `mutation RegisterTestUser($user: UserInputTests!) {
-              registerTestUser(user: $user) {
-                message
-                user {
-                  id
-                  user_name
-                  email
-                  organization
-                  
-                }
-              }
-            }`,
-        variables: {
-          user: {
-            user_name: employee.user_name,
-            email: employee.email,
-            organization: employee.organization,
-            password: employee.password,
-          },
-        },
-      })
-      .expect(200, (err, response) => {
-        if (err) {
-          reject(err);
-        } else {
-          const user = response.body.data.registerAnotherTestUser.user;
-          expect(user).toHaveProperty('id');
-          expect(user).toHaveProperty('user_name');
-          expect(user).toHaveProperty('email');
-          expect(user).toHaveProperty('organization');
-          resolve(response.body.data.registerAnotherTestUser);
-        }
-      });
-  });
-};
-
 const postEmployee = (
   url: string | Application,
+  token: string,
   employee: UserTest,
 ): Promise<UserTest> => {
   return new Promise((resolve, reject) => {
     request(url)
       .post('/graphql')
       .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
       .send({
         query: `
-        mutation RegisterEmployee($user: UserInput!) {
+        mutation Mutation($user: UserInput!) {
           registerEmployee(user: $user) {
             message
             user {
@@ -210,12 +166,12 @@ const postEmployee = (
         if (err) {
           reject(err);
         } else {
-          const user = response.body.data.postEmployee.user;
+          const user = response.body.data.registerEmployee.user;
           expect(user).toHaveProperty('id');
           expect(user).toHaveProperty('user_name');
           expect(user).toHaveProperty('email');
           expect(user).toHaveProperty('organization');
-          resolve(response.body.data.postEmployee);
+          resolve(response.body.data.registerEmployee);
         }
       });
   });
@@ -224,11 +180,13 @@ const postEmployee = (
 const postFacilityManager = (
   url: string | Application,
   employee: UserTest,
+  token: string,
 ): Promise<UserTest> => {
   return new Promise((resolve, reject) => {
     request(url)
       .post('/graphql')
       .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
       .send({
         query: `
         mutation RegisterFaciltyManager($user: UserInput!) {
@@ -255,12 +213,12 @@ const postFacilityManager = (
         if (err) {
           reject(err);
         } else {
-          const user = response.body.data.postFacilityManager.user;
+          const user = response.body.data.registerFaciltyManager.user;
           expect(user).toHaveProperty('id');
           expect(user).toHaveProperty('user_name');
           expect(user).toHaveProperty('email');
           expect(user).toHaveProperty('organization');
-          resolve(response.body.data.postFacilityManager);
+          resolve(response.body.data.registerFaciltyManager);
         }
       });
   });
@@ -283,6 +241,7 @@ const loginUser = (
               email
               user_name
               id
+              organization
             }
           }
         }`,
@@ -293,7 +252,7 @@ const loginUser = (
           reject(err);
         } else {
           const user = vars.credentials;
-          console.log('login response', response.body);
+          console.log('login response', response.body.data.login);
           const userData = response.body.data.login;
           expect(userData).toHaveProperty('message');
           expect(userData).toHaveProperty('token');
@@ -311,7 +270,6 @@ export {
   getUsersByOrganization,
   getUserById,
   registerTestUser,
-  registerAnotherTestUser,
   postEmployee,
   postFacilityManager,
   loginUser,
