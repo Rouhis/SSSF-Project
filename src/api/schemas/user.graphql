@@ -70,7 +70,7 @@ type Mutation {
   registerEmployee(user: UserInput!): AddedUserResponse
   registerFaciltyManager(user: UserInput!): AddedUserResponse
   updateUser(user: UserModify!): UserResponse
-  deleteUser: UserDeleteResponse
+  deleteUser(id: ID!): UserDeleteResponse
   registerTestUser(user: UserInputTests!): AddedUserResponse
   updateUserAsAdmin(user: UserModify!, id: ID!): UserResponse
   deleteUserAsAdmin(id: ID!): UserDeleteResponse

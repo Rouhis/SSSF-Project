@@ -279,7 +279,7 @@ export default {
     },
     deleteUser: async (
       _parent: undefined,
-      _args: {},
+      _args: {id: string},
       context: MyContext,
     ): Promise<{message: string; user: Omit<User, 'role' | 'password'>}> => {
       if (!process.env.AUTH_URL) {
@@ -289,12 +289,14 @@ export default {
       // Check if the user is authenticated
       // Check if the user is an admin
       if (context.userdata?.role !== 'manager') {
-        throw new GraphQLError('Only admins can delete other users');
+        throw new GraphQLError(
+          'Only managers and admins can delete other users',
+        );
       }
 
       // Fetch the user before deleting
       const userResponse = await fetchData<{data: User}>(
-        process.env.AUTH_URL + '/users/' + context.userdata.user._id,
+        process.env.AUTH_URL + '/users/' + _args.id,
         {
           method: 'GET',
           headers: {
@@ -311,7 +313,7 @@ export default {
       };
 
       const deleteResponse = await fetchData<MessageResponse>(
-        process.env.AUTH_URL + '/users/' + context.userdata.user._id,
+        process.env.AUTH_URL + '/users/' + _args.id,
         options,
       );
 

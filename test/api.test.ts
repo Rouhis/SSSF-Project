@@ -8,6 +8,8 @@ import {
   loginUser,
   postFacilityManager,
   postEmployee,
+  deleteUser,
+  deleteUserAsAdmin,
 } from './userFunctions';
 import mongoose from 'mongoose';
 import {getNotFound} from './testFunctions';
@@ -88,7 +90,6 @@ describe('Testing graphql api', () => {
   });
 
   it('should return users by organization', async () => {
-    const organization = testUser.organization || 'metropolia';
     await getUsersByOrganization(app, userData.user.organization);
   });
 
@@ -131,5 +132,12 @@ describe('Testing graphql api', () => {
 
   it('should create a employee (user)', async () => {
     await postEmployee(app, facilityManagerData.token, testUser3);
+  });
+
+  it('should delete user', async () => {
+    await deleteUser(app, userData2.user.id, facilityManagerData.token);
+  });
+  it('should delete user as admin', async () => {
+    await deleteUserAsAdmin(app, userData.user.id, adminData.token);
   });
 });

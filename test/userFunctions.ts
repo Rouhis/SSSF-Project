@@ -265,6 +265,89 @@ const loginUser = (
   });
 };
 
+const deleteUser = (
+  url: string | Application,
+  id: string,
+  token: string,
+): Promise<UserTest> => {
+  return new Promise((resolve, reject) => {
+    console.log('delete user', id);
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        query: `
+        mutation DeleteUser($deleteUserId: ID!) {
+          deleteUser(id: $deleteUserId) {
+            message
+            user {
+              id
+              user_name
+              email
+              organization
+            }
+          }
+        }`,
+        variables: {
+          deleteUserId: id,
+        },
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log('delete user response', response.body);
+          const user = response.body.data.deleteUser;
+          expect(user).toHaveProperty('user');
+          expect(user).toHaveProperty('message');
+          resolve(response.body.data.deleteUser);
+        }
+      });
+  });
+};
+
+const deleteUserAsAdmin = (
+  url: string | Application,
+  id: string,
+  token: string,
+): Promise<UserTest> => {
+  return new Promise((resolve, reject) => {
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        query: `
+        mutation DeleteUserAsAdmin($deleteUserAsAdminId: ID!) {
+          deleteUserAsAdmin(id: $deleteUserAsAdminId) {
+            message
+            user {
+              id
+              user_name
+              email
+              organization
+            }
+          }
+        }`,
+        variables: {
+          deleteUserAsAdminId: id,
+        },
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log('delete user response', response.body);
+          const user = response.body.data.deleteUserAsAdmin;
+          expect(user).toHaveProperty('user');
+          expect(user).toHaveProperty('message');
+          resolve(response.body.data.deleteUserAsAdmin);
+        }
+      });
+  });
+};
+
 export {
   getUser,
   getUsersByOrganization,
@@ -273,4 +356,6 @@ export {
   postEmployee,
   postFacilityManager,
   loginUser,
+  deleteUser,
+  deleteUserAsAdmin,
 };
