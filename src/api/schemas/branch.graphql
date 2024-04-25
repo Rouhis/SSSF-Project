@@ -1,0 +1,34 @@
+
+type Branch{
+    id: ID!
+    branch_name: String!
+    organization: Organization
+}
+
+type BranchMessage{
+    message: String!
+    branch: Branch!
+}
+type BranchDeleteResponse{
+    message: String!
+}
+input BranchInput{
+    branch_name: String!
+    organization_id: ID!
+}
+
+input BranchModify{
+    branch_name: String
+    organization_id: ID
+}
+
+type Query{
+    branches: [Branch]
+    branchById(id: ID!): Branch
+}
+
+type Mutation{
+    addBranch(branch: BranchInput): BranchMessage
+    modifyBranch(id: ID!, branch: BranchModify): BranchMessage
+    deleteBranch(id: ID!): BranchDeleteResponse
+}

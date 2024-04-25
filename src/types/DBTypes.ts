@@ -1,7 +1,6 @@
-import {Document, Types} from 'mongoose';
+import mongoose, {Document, Types} from 'mongoose';
 
 type User = Partial<Document> & {
-  id: Types.ObjectId | string;
   user_name: string;
   email: string;
   organization: string;
@@ -25,12 +24,17 @@ type TokenContent = {
   role: string;
   token: string;
   user: LoginUser;
-  orgazination: string;
+  organization: string;
 };
 
 type Organization = {
-  id: Types.ObjectId | string;
+  id?: Types.ObjectId | string;
   organization_name: string;
+};
+
+type Branch = Partial<Document> & {
+  branch_name: string;
+  organization: mongoose.Types.ObjectId;
 };
 
 export {
@@ -43,4 +47,5 @@ export {
   Organization,
   OrganizationTest,
   OrganizationOutPut,
+  Branch,
 };

@@ -1,9 +1,28 @@
 import {GraphQLError} from 'graphql';
 import {MyContext} from '../../types/MyContext';
-import {Organization} from '../../types/DBTypes';
+import {Branch, Organization} from '../../types/DBTypes';
 import organizationModel from '../models/organizationModel';
 
 export default {
+  Branch: {
+    // Add this resolver for the Branch type
+    organization: async (parent: Branch): Promise<Organization> => {
+      console.log('parent', parent);
+      // parent is the Branch object. We assume it has an organizationId field.
+      const organization = await organizationModel.findById(
+        parent.organization,
+      );
+      console.log('organization', organization);
+      if (!organization) {
+        throw new GraphQLError('Organization not found', {
+          extensions: {
+            code: 'NOT_FOUND',
+          },
+        });
+      }
+      return organization;
+    },
+  },
   Query: {
     organizations: async (): Promise<Organization[]> => {
       return await organizationModel.find();
@@ -13,6 +32,7 @@ export default {
       args: {id: string},
     ): Promise<Organization> => {
       const organization = await organizationModel.findById(args.id);
+      console.log('organization', organization);
       if (!organization) {
         throw new GraphQLError('Cat not found', {
           extensions: {

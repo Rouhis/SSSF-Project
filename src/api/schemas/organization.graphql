@@ -2,7 +2,6 @@
 type Organization{
     id: ID!
     organization_name: String!
-    users: [User]
 }
 
 type OrganizationMessage{
