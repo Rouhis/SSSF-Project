@@ -39,6 +39,15 @@ type Branch = Partial<Document> & {
   organization: mongoose.Types.ObjectId;
 };
 
+type Key = Partial<Document> & {
+  key_name: string;
+  branch: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
+  loaned: boolean;
+  loanedtime: Date | null;
+  returnedtime: Date | null;
+};
+
 export {
   User,
   UserOutput,
@@ -51,4 +60,5 @@ export {
   OrganizationOutPut,
   Branch,
   BranchTest,
+  Key,
 };

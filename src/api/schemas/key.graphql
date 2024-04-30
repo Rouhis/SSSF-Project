@@ -1,0 +1,43 @@
+scalar DateTime
+
+type Key {
+  id: ID!
+  key_name: String!
+  user: ID!
+  loaned: Boolean!
+  loanedtime: DateTime
+  returnedtime: DateTime
+  loantime: DateTime
+}
+
+type KeyMessage {
+  message: String!
+  key: Key!
+}
+
+type KeyDeleteResponse {
+  message: String!
+}
+
+input KeyInput {
+  key_name: String
+}
+
+input KeyModify {
+  key_name: String
+  loantime: DateTime
+}
+
+type Query {
+  keys: [Key]
+  keyById(id: ID!): Key
+  keysByUser(user: ID!): [Key]
+  keysByBranch(branch: ID!): [Key]
+}
+
+type Mutation {
+  addKey(key: KeyInput): KeyMessage
+  modifyKey(id: ID!, key: KeyModify): KeyMessage
+  deleteKey(id: ID!): KeyDeleteResponse
+}
+

@@ -45,7 +45,10 @@ export default {
       context: MyContext,
     ): Promise<{branch: Branch; message: string}> => {
       console.log('do we get here', args);
-      if (context.userdata?.role !== 'admin') {
+      if (
+        context.userdata?.role !== 'manager' &&
+        context.userdata?.role !== 'admin'
+      ) {
         throw new GraphQLError('Unauthorized');
       }
       const newBranch = new branchModel(args.branch);
@@ -57,7 +60,10 @@ export default {
       args: {branch: Branch; id: string},
       context: MyContext,
     ): Promise<{branch: Branch; message: string}> => {
-      if (context.userdata?.role !== 'admin') {
+      if (
+        context.userdata?.role !== 'manager' &&
+        context.userdata?.role !== 'admin'
+      ) {
         throw new GraphQLError('Unauthorized');
       }
       console.log('args', args);
@@ -75,7 +81,10 @@ export default {
       args: {id: string},
       context: MyContext,
     ): Promise<{message: string}> => {
-      if (context.userdata?.role !== 'admin') {
+      if (
+        context.userdata?.role !== 'manager' &&
+        context.userdata?.role !== 'admin'
+      ) {
         throw new GraphQLError('Unauthorized');
       }
       await branchModel.findByIdAndDelete(args.id);
