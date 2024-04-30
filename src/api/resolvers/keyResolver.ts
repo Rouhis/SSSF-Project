@@ -25,6 +25,7 @@ export default {
       args: {branch: string},
     ): Promise<Key[]> => {
       const keys = await keyModel.find();
+      console.log('keys', keys);
       const filteredKeys = keys.filter(
         (key) => key.branch.toString() === args.branch,
       );
@@ -52,7 +53,7 @@ export default {
       await newKey.save();
       return {message: 'Key added', key: newKey};
     },
-    modifyKey: async (
+    loanKey: async (
       _parent: undefined,
       args: {key: Key; id: string},
       context: MyContext,
@@ -72,8 +73,6 @@ export default {
       if (!user) {
         throw new GraphQLError('User not found');
       }
-      console.log('user', user);
-      console.log('key', updatedKey);
       updatedKey.user = user._id;
 
       if (updatedKey.loaned === false) {

@@ -1,8 +1,21 @@
 import {GraphQLError} from 'graphql';
 import {MyContext} from '../../types/MyContext';
-import {Branch} from '../../types/DBTypes';
+import {Branch, Key} from '../../types/DBTypes';
 import branchModel from '../models/branchModel';
 export default {
+  Key: {
+    branch: async (parent: Key): Promise<Branch> => {
+      const branch = await branchModel.findById(parent.branch);
+      if (!branch) {
+        throw new GraphQLError('Branch not found', {
+          extensions: {
+            code: 'NOT_FOUND',
+          },
+        });
+      }
+      return branch;
+    },
+  },
   Query: {
     branches: async (): Promise<Branch[]> => {
       return await branchModel.find();
@@ -28,6 +41,7 @@ export default {
       const branches = await branchModel.find();
       console.log('branches', branches);
       console.log('args', args.organization);
+      console.log('branches', branches);
       const filteredBranches = branches.filter(
         (branch) => branch.organization.toString() === args.organization,
       );

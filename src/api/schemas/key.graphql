@@ -3,11 +3,12 @@ scalar DateTime
 type Key {
   id: ID!
   key_name: String!
-  user: ID!
+  user: ID
   loaned: Boolean!
   loanedtime: DateTime
   returnedtime: DateTime
   loantime: DateTime
+  branch: Branch!
 }
 
 type KeyMessage {
@@ -20,14 +21,17 @@ type KeyDeleteResponse {
 }
 
 input KeyInput {
-  key_name: String
+  key_name: String!
+  branch: ID!
 }
 
-input KeyModify {
+input LoanKey {
   key_name: String
   loantime: DateTime
 }
-
+input KeyModify {
+  key_name: String
+}
 type Query {
   keys: [Key]
   keyById(id: ID!): Key
@@ -37,7 +41,8 @@ type Query {
 
 type Mutation {
   addKey(key: KeyInput): KeyMessage
-  modifyKey(id: ID!, key: KeyModify): KeyMessage
+  loanKey(id: ID!, key: LoanKey): KeyMessage
   deleteKey(id: ID!): KeyDeleteResponse
+  modifyKey(id: ID!, key: KeyModify): KeyMessage
 }
 
