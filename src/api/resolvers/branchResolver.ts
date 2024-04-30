@@ -2,7 +2,6 @@ import {GraphQLError} from 'graphql';
 import {MyContext} from '../../types/MyContext';
 import {Branch} from '../../types/DBTypes';
 import branchModel from '../models/branchModel';
-
 export default {
   Query: {
     branches: async (): Promise<Branch[]> => {
@@ -21,6 +20,22 @@ export default {
         });
       }
       return branch;
+    },
+    branchesByOrganization: async (
+      _parent: undefined,
+      args: {organization: string},
+    ): Promise<Branch[]> => {
+      const branches = await branchModel.find();
+      console.log('branches', branches);
+      console.log('args', args.organization);
+      const filteredBranches = branches.filter(
+        (branch) => branch.organization.toString() === args.organization,
+      );
+      console.log('filteredBranches', filteredBranches);
+      return filteredBranches.map((branch) => {
+        branch.id = branch._id;
+        return branch;
+      });
     },
   },
   Mutation: {

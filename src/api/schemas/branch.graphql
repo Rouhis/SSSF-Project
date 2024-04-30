@@ -14,17 +14,18 @@ type BranchDeleteResponse{
 }
 input BranchInput{
     branch_name: String!
-    organization_id: ID!
+    organization: ID!
 }
 
 input BranchModify{
     branch_name: String
-    organization_id: ID
+    organization: ID
 }
 
 type Query{
     branches: [Branch]
     branchById(id: ID!): Branch
+    branchesByOrganization(organization: ID!): [Branch]
 }
 
 type Mutation{

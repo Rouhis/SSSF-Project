@@ -14,6 +14,8 @@ type UserInput = Omit<User, 'id' | 'role'>;
 
 type UserTest = Partial<User>;
 
+type BranchTest = Partial<Branch>;
+
 type LoginUser = Omit<User, 'password'>;
 
 type OrganizationTest = Partial<Organization>;
@@ -48,4 +50,5 @@ export {
   OrganizationTest,
   OrganizationOutPut,
   Branch,
+  BranchTest,
 };

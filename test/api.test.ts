@@ -11,12 +11,17 @@ import {
   deleteUser,
   deleteUserAsAdmin,
 } from './userFunctions';
-import mongoose from 'mongoose';
+import mongoose, {ObjectId} from 'mongoose';
 import {getNotFound} from './testFunctions';
 import randomstring from 'randomstring';
 import jwt from 'jsonwebtoken';
 import {LoginResponse, OrganizationResponse} from '../src/types/MessageTypes';
-import {Organization, OrganizationTest, UserTest} from '../src/types/DBTypes';
+import {
+  BranchTest,
+  Organization,
+  OrganizationTest,
+  UserTest,
+} from '../src/types/DBTypes';
 import {
   deleteOrganization,
   getAllOrganizations,
@@ -24,6 +29,7 @@ import {
   postOrganization,
 } from './organizationFunctions';
 
+import {postBranch} from './branchFunctions';
 describe('Testing graphql api', () => {
   beforeAll(async () => {
     await mongoose.connect(process.env.DATABASE_URL as string);
@@ -79,6 +85,11 @@ describe('Testing graphql api', () => {
 
   const testOrganization: OrganizationTest = {
     organization_name: 'Metropolia' + randomstring.generate(5),
+  };
+
+  const testBranch: BranchTest = {
+    branch_name: 'Karamalmi' + randomstring.generate(5),
+    organization: undefined,
   };
 
   it('should create a user', async () => {
@@ -167,6 +178,13 @@ describe('Testing graphql api', () => {
       organizationData.organization as Partial<Organization>,
       adminData.token,
     );
+  });
+
+  it('should post branch', async () => {
+    testBranch.organization = new mongoose.Types.ObjectId(
+      organizationData.organization?.id,
+    );
+    await postBranch(app, testBranch, adminData.token);
   });
   it('should delete organization', async () => {
     await deleteOrganization(
