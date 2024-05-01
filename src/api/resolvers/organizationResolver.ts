@@ -7,7 +7,6 @@ export default {
   Branch: {
     // Add this resolver for the Branch type
     organization: async (parent: Branch): Promise<Organization> => {
-      console.log('parent', parent);
       // parent is the Branch object. We assume it has an organizationId field.
       const organization = await organizationModel.findById(
         parent.organization,

@@ -37,6 +37,7 @@ type Query {
   keyById(id: ID!): Key
   keysByUser(user: ID!): [Key]
   keysByBranch(branch: ID!): [Key]
+  keysOut(token: String!): [Key]
 }
 
 type Mutation {

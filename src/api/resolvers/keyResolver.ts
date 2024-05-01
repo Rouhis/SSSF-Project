@@ -3,6 +3,9 @@ import {MyContext} from '../../types/MyContext';
 import {Key, User} from '../../types/DBTypes';
 import keyModel from '../models/keyModel';
 import fetchData from '../../functions/fetchData';
+import {checkToken} from '../checkToken';
+import organizationModel from '../models/organizationModel';
+import branchModel from '../models/branchModel';
 
 export default {
   Query: {
@@ -33,6 +36,35 @@ export default {
         key.id = key._id;
         return key;
       });
+    },
+    keysOut: async (
+      _parent: undefined,
+      args: {token: string},
+    ): Promise<Key[]> => {
+      const userToken = checkToken(args.token);
+      const organization = await organizationModel.findOne({
+        organization_name: userToken.organization,
+      });
+      if (!organization) {
+        throw new Error('Organization not found');
+      }
+      const keys = await keyModel.find({loaned: false});
+      console.log('keys', keys);
+      const filteredKeys = [];
+      for (const key of keys) {
+        const branch = await branchModel.findById(key.branch);
+        console.log('branch whole', branch);
+        console.log('organization', organization._id.toString());
+        console.log('branch', branch?.organization.toString());
+        if (
+          branch &&
+          branch.organization.toString() === organization._id.toString()
+        ) {
+          key.id = key._id;
+          filteredKeys.push(key);
+        }
+      }
+      return filteredKeys;
     },
   },
   Mutation: {
