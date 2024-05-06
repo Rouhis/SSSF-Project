@@ -34,14 +34,28 @@ export default {
       }
       return branch;
     },
+    branchByName: async (
+      _parent: undefined,
+      args: {branch_name: string},
+    ): Promise<Branch> => {
+      const branch = await branchModel.findOne({
+        branch_name: args.branch_name,
+      });
+      if (!branch) {
+        throw new GraphQLError('Branch not found', {
+          extensions: {
+            code: 'NOT_FOUND',
+          },
+        });
+      }
+      return branch;
+    },
     branchesByOrganization: async (
       _parent: undefined,
       args: {organization: string},
     ): Promise<Branch[]> => {
       const branches = await branchModel.find();
-      console.log('branches', branches);
       console.log('args', args.organization);
-      console.log('branches', branches);
       const filteredBranches = branches.filter(
         (branch) => branch.organization.toString() === args.organization,
       );
@@ -65,7 +79,13 @@ export default {
       ) {
         throw new GraphQLError('Unauthorized');
       }
+      if (!args.branch) {
+        throw new GraphQLError('No branch data provided');
+      }
       const newBranch = new branchModel(args.branch);
+      if (!newBranch) {
+        throw new GraphQLError('Failed to create branch');
+      }
       await newBranch.save();
       return {message: 'Branch added', branch: newBranch};
     },
@@ -79,6 +99,9 @@ export default {
         context.userdata?.role !== 'admin'
       ) {
         throw new GraphQLError('Unauthorized');
+      }
+      if (!args.branch || !args.id) {
+        throw new GraphQLError('No branch data or id provided');
       }
       console.log('args', args);
       const branch = await branchModel.findById(args.id);

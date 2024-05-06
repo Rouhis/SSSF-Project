@@ -4,7 +4,7 @@ import fetchData from '../../functions/fetchData';
 import {MessageResponse} from '../../types/MessageTypes';
 import {MyContext} from '../../types/MyContext';
 import * as Randomstring from 'randomstring';
-
+import jwt from 'jsonwebtoken';
 // TODO: create resolvers based on user.graphql
 // note: when updating or deleting a user don't send id to the auth server, it will get it from the token. So token needs to be sent with the request to the auth server
 // note2: when updating or deleting a user as admin, you need to send user id (dont delete admin btw) and also check if the user is an admin by checking the role from the user object form context
@@ -40,6 +40,27 @@ export default {
         return user;
       });
     },
+    userFromToken: async (
+      _parent: undefined,
+      _args: undefined,
+      context: MyContext,
+    ): Promise<UserOutput> => {
+      if (!context.userdata) {
+        throw new GraphQLError('User not authenticated');
+      }
+
+      const user = await fetchData<User>(
+        process.env.AUTH_URL + '/users/' + context.userdata.user._id,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${context.userdata.token}`,
+          },
+        },
+      );
+      user.id = user._id;
+      return user;
+    },
     userById: async (
       _parent: undefined,
       args: {id: string},
@@ -55,14 +76,25 @@ export default {
     },
     checkToken: async (
       _parent: undefined,
-      args: undefined,
+      _args: undefined,
       context: MyContext,
     ) => {
-      const response = {
-        message: 'Token is valid',
-        user: context.userdata,
-      };
-      return response;
+      if (!context.userdata?.token) {
+        throw new GraphQLError('No token provided');
+      }
+      try {
+        if (!process.env.JWT_SECRET) {
+          throw new Error('JWT secret not defined');
+        }
+        jwt.verify(context.userdata.token, process.env.JWT_SECRET);
+        const response = {
+          message: 'Token is valid',
+          user: context.userdata.user,
+        };
+        return response;
+      } catch (error) {
+        throw new GraphQLError('Token is invalid');
+      }
     },
   },
   Mutation: {
@@ -101,7 +133,7 @@ export default {
       _parent: undefined,
       args: {user: Partial<User>},
       context: MyContext,
-    ): Promise<{user: UserOutput; message: string}> => {
+    ): Promise<{user: UserOutput; message: string; password: string}> => {
       if (!process.env.AUTH_URL) {
         throw new GraphQLError('Auth URL not set in .env file');
       }
@@ -132,17 +164,17 @@ export default {
       if (!registerResponse.data || !registerResponse.data._id) {
         throw new GraphQLError('User registration failed');
       }
-
       return {
         user: {...registerResponse.data, id: registerResponse.data._id},
         message: registerResponse.message,
+        password: password,
       };
     },
     registerFaciltyManager: async (
       _parent: undefined,
       args: {user: User},
       context: MyContext,
-    ): Promise<{user: UserOutput; message: string}> => {
+    ): Promise<{user: UserOutput; message: string; password: string}> => {
       if (!process.env.AUTH_URL) {
         throw new GraphQLError('Auth URL not set in .env file');
       }
@@ -176,6 +208,7 @@ export default {
       return {
         user: {...registerResponse.data, id: registerResponse.data._id},
         message: registerResponse.message,
+        password: password,
       };
     },
     login: async (
@@ -198,7 +231,7 @@ export default {
       >(process.env.AUTH_URL + '/auth/login', options);
 
       loginResponse.user.id = loginResponse.user._id;
-
+      console.log('loginResponse:', loginResponse);
       return loginResponse;
     },
     updateUser: async (
@@ -269,6 +302,8 @@ export default {
       _args: {id: string},
       context: MyContext,
     ): Promise<{message: string; user: Omit<User, 'role' | 'password'>}> => {
+      console.log('do we get here');
+      console.log('context:', _args.id);
       if (!process.env.AUTH_URL) {
         throw new GraphQLError('Auth URL not set in .env file');
       }
@@ -279,6 +314,9 @@ export default {
         throw new GraphQLError(
           'Only managers and admins can delete other users',
         );
+      }
+      if (!_args.id) {
+        throw new GraphQLError('No user id provided');
       }
 
       // Fetch the user before deleting
@@ -291,7 +329,10 @@ export default {
           },
         },
       );
-
+      console.log('userResponse:', userResponse);
+      if (!userResponse) {
+        throw new GraphQLError('User not found');
+      }
       const options = {
         method: 'DELETE',
         headers: {

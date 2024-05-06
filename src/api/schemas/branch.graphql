@@ -26,6 +26,7 @@ type Query{
     branches: [Branch]
     branchById(id: ID!): Branch
     branchesByOrganization(organization: ID!): [Branch]
+    branchByName(branch_name: String!): Branch
 }
 
 type Mutation{

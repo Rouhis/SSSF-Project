@@ -11,7 +11,6 @@ export default {
       const organization = await organizationModel.findById(
         parent.organization,
       );
-      console.log('organization', organization);
       if (!organization) {
         throw new GraphQLError('Organization not found', {
           extensions: {
@@ -31,9 +30,24 @@ export default {
       args: {id: string},
     ): Promise<Organization> => {
       const organization = await organizationModel.findById(args.id);
-      console.log('organization', organization);
       if (!organization) {
         throw new GraphQLError('Cat not found', {
+          extensions: {
+            code: 'NOT_FOUND',
+          },
+        });
+      }
+      return organization;
+    },
+    organizationByName: async (
+      _parent: undefined,
+      args: {organization_name: string},
+    ): Promise<Organization> => {
+      const organization = await organizationModel.findOne({
+        organization_name: args.organization_name,
+      });
+      if (!organization) {
+        throw new GraphQLError('Organization not found', {
           extensions: {
             code: 'NOT_FOUND',
           },

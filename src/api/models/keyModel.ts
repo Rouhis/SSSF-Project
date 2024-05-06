@@ -24,6 +24,9 @@ const keyModel = new mongoose.Schema<Key>({
   returnedtime: {
     type: Date,
   },
+  loantime: {
+    type: Date,
+  },
 });
 
 export default mongoose.model('Key', keyModel);

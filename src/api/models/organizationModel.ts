@@ -5,6 +5,7 @@ const organizationModel = new mongoose.Schema<Organization>({
   organization_name: {
     type: String,
     required: true,
+    unique: true,
   },
 });
 export default mongoose.model('Organization', organizationModel);

@@ -2,6 +2,7 @@ type User {
   id: ID!
   user_name: String!
   email: String!
+  role: String
   organization: String!
 }
 
@@ -26,6 +27,7 @@ type UserResponse {
 type AddedUserResponse {
   message: String!
   user: AddedUser!
+  password: String!
 }
 
 input Credentials {
@@ -58,11 +60,17 @@ type Query {
   userById(id: ID!): User
   checkToken: UserResponse
   usersByOrganization(organization: String): [User]
+  userFromToken: User
 }
 
 type UserDeleteResponse {
   message: String!
   user: User
+}
+
+type TestAddedUserResponse {
+  message: String!
+  user: AddedUser!
 }
 
 type Mutation {
@@ -71,7 +79,7 @@ type Mutation {
   registerFaciltyManager(user: UserInput!): AddedUserResponse
   updateUser(user: UserModify!): UserResponse
   deleteUser(id: ID!): UserDeleteResponse
-  registerTestUser(user: UserInputTests!): AddedUserResponse
+  registerTestUser(user: UserInputTests!): TestAddedUserResponse
   updateUserAsAdmin(user: UserModify!, id: ID!): UserResponse
   deleteUserAsAdmin(id: ID!): UserDeleteResponse
 }

@@ -37,6 +37,34 @@ export default {
         return key;
       });
     },
+    keysByOrganization: async (
+      _parent: undefined,
+      args: {token: string},
+    ): Promise<Key[]> => {
+      const userToken = checkToken(args.token);
+      console.log('userToken', userToken);
+      const organization = await organizationModel.findOne({
+        organization_name: userToken.organization,
+      });
+      if (!organization) {
+        throw new Error('Organization not found');
+      }
+      const keys = await keyModel.find();
+      console.log('keys', keys);
+      const filteredKeys = [];
+      for (const key of keys) {
+        const branch = await branchModel.findById(key.branch);
+        if (
+          branch &&
+          branch.organization.toString() === organization._id.toString()
+        ) {
+          key.id = key._id;
+          filteredKeys.push(key);
+        }
+      }
+      console.log('filteredKeys', filteredKeys);
+      return filteredKeys;
+    },
     keysOut: async (
       _parent: undefined,
       args: {token: string},
@@ -48,14 +76,10 @@ export default {
       if (!organization) {
         throw new Error('Organization not found');
       }
-      const keys = await keyModel.find({loaned: false});
-      console.log('keys', keys);
+      const keys = await keyModel.find({loaned: true});
       const filteredKeys = [];
       for (const key of keys) {
         const branch = await branchModel.findById(key.branch);
-        console.log('branch whole', branch);
-        console.log('organization', organization._id.toString());
-        console.log('branch', branch?.organization.toString());
         if (
           branch &&
           branch.organization.toString() === organization._id.toString()
@@ -73,17 +97,27 @@ export default {
       args: {key: Omit<Key, 'id'>},
       context: MyContext,
     ): Promise<{key: Key; message: string}> => {
-      console.log('do we get here', args);
-      if (
-        context.userdata?.role !== 'manager' &&
-        context.userdata?.role !== 'admin'
-      ) {
-        throw new GraphQLError('Unauthorized');
+      try {
+        console.log('do we get here', args);
+        if (
+          context.userdata?.role !== 'manager' &&
+          context.userdata?.role !== 'admin'
+        ) {
+          throw new GraphQLError('Unauthorized');
+        }
+        const newKey = new keyModel(args.key);
+        console.log('newKey', newKey);
+        if (!newKey) {
+          throw new GraphQLError('Failed to create key');
+        }
+        newKey.loaned = false;
+        console.log('newKey2', newKey);
+        await newKey.save();
+        return {message: 'Key added', key: newKey};
+      } catch (error) {
+        console.error('Error in addKey mutation:', error);
+        throw error;
       }
-      const newKey = new keyModel(args.key);
-      newKey.loaned = false;
-      await newKey.save();
-      return {message: 'Key added', key: newKey};
     },
     loanKey: async (
       _parent: undefined,
@@ -124,7 +158,11 @@ export default {
       args: {id: string},
       context: MyContext,
     ): Promise<{message: string}> => {
-      if (context.userdata?.role !== 'admin') {
+      console.log('deleteKey', args);
+      if (
+        context.userdata?.role !== 'admin' &&
+        context.userdata?.role !== 'manager'
+      ) {
         throw new GraphQLError('Unauthorized');
       }
       await keyModel.findByIdAndDelete(args.id);

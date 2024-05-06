@@ -8,7 +8,7 @@ type User = Partial<Document> & {
   password: string;
 };
 
-type UserOutput = Omit<User, 'password' | 'role'>;
+type UserOutput = Omit<User, 'password'>;
 
 type UserInput = Omit<User, 'id' | 'role'>;
 
@@ -46,6 +46,7 @@ type Key = Partial<Document> & {
   loaned: boolean;
   loanedtime: Date | null;
   returnedtime: Date | null;
+  loantime: Date | null;
 };
 
 export {

@@ -22,6 +22,7 @@ input OrganizationModify{
 type Query{
     organizations: [Organization]
     organizationById(id: ID!): Organization
+    organizationByName(organization_name: String!): Organization
 }
 
 type Mutation{
