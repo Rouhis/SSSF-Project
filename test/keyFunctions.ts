@@ -14,14 +14,6 @@ const keys = (url: string | Application) => {
                 keys {
                 id
                 key_name
-                branch {
-                    id
-                    branch_name
-                    organization {
-                    id
-                    organization_name
-                    }
-                }
                 }
             }
             `,
