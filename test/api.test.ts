@@ -60,7 +60,7 @@ describe('Testing graphql api', () => {
     await getNotFound(app);
   });
 
-  // test create user
+  // create variables for tests
   let userData: LoginResponse;
   let userData2: LoginResponse;
   let adminData: LoginResponse;
