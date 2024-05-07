@@ -194,10 +194,6 @@ const keysByUser = (url: string | Application, id: string) => {
               loanedtime
               returnedtime
               loantime
-              branch {
-                id
-                branch_name
-              }
             }
           }
                 `,
