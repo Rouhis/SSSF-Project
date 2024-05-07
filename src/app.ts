@@ -37,8 +37,8 @@ const rateLimitRule = createRateLimitRule({
 
 const permissions = shield({
   Mutation: {
-    login: rateLimitRule({window: '10s', max: 5}),
-    registerTestUser: rateLimitRule({window: '10s', max: 3}),
+    login: rateLimitRule({window: '5s', max: 5}),
+    registerTestUser: rateLimitRule({window: '5s', max: 3}),
   },
 });
 (async () => {
