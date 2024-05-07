@@ -18,10 +18,8 @@ import authenticate from './functions/authenticate';
 import {makeExecutableSchema} from '@graphql-tools/schema';
 import {applyMiddleware} from 'graphql-middleware';
 import {MyContext} from './types/MyContext';
-/*
 import {createRateLimitRule} from 'graphql-rate-limit';
 import {shield} from 'graphql-shield';
-*/
 const app = express();
 
 app.use(
@@ -30,7 +28,19 @@ app.use(
     contentSecurityPolicy: false,
   }),
 );
+const rateLimitRule = createRateLimitRule({
+  identifyContext: (ctx) => {
+    // console.log(ctx.id);
+    return ctx.userdata?._id ? ctx.userdata._id : ctx.id;
+  },
+});
 
+const permissions = shield({
+  Mutation: {
+    login: rateLimitRule({window: '10s', max: 3}),
+    registerTestUser: rateLimitRule({window: '10s', max: 1}),
+  },
+});
 (async () => {
   try {
     // TODO Create a rate limit rule instance (not WSK2 course)
@@ -40,6 +50,7 @@ app.use(
         typeDefs,
         resolvers,
       }),
+      permissions,
     );
 
     const server = new ApolloServer<MyContext>({
