@@ -22,6 +22,8 @@ type OrganizationTest = Partial<Organization>;
 
 type OrganizationOutPut = Partial<Organization>;
 
+type KeyTest = Partial<Key>;
+
 type TokenContent = {
   role: string;
   token: string;
@@ -62,4 +64,5 @@ export {
   Branch,
   BranchTest,
   Key,
+  KeyTest,
 };

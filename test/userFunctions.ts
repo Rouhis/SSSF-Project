@@ -348,6 +348,91 @@ const deleteUserAsAdmin = (
   });
 };
 
+const modifyUser = (
+  url: string | Application,
+  user: UserTest,
+  token: string,
+): Promise<UserTest> => {
+  return new Promise((resolve, reject) => {
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        query: `mutation Mutation($user: UserModify!) {
+          updateUser(user: $user) {
+            message
+            user {
+              id
+              user_name
+              email
+              role
+              organization
+            }
+          }
+        }`,
+        variables: {
+          user: {
+            user_name: user.user_name,
+            password: user.password,
+          },
+        },
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log('modify user response', response.body);
+          const user = response.body.data.updateUser;
+          expect(user).toHaveProperty('user');
+          expect(user).toHaveProperty('message');
+          resolve(response.body.data.modifyUser);
+        }
+      });
+  });
+};
+
+const tokenCheck = (
+  url: string | Application,
+  token: string,
+): Promise<{message: string; user: UserTest}> => {
+  return new Promise((resolve, reject) => {
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        query: `{
+          checkToken {
+            message
+            user {
+              user_name
+              email
+              organization
+              role
+            }
+          }
+        }`,
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log('check token response', response.body);
+          const fetch = response.body.data.checkToken;
+          const user = fetch.user;
+          expect(fetch).toHaveProperty('user');
+          expect(fetch).toHaveProperty('message');
+          expect(user).toHaveProperty('user_name');
+          expect(user).toHaveProperty('email');
+          expect(user).toHaveProperty('organization');
+          expect(user).toHaveProperty('role');
+          resolve(response.body.data.checkToken);
+        }
+      });
+  });
+};
+
 export {
   getUser,
   getUsersByOrganization,
@@ -358,4 +443,6 @@ export {
   loginUser,
   deleteUser,
   deleteUserAsAdmin,
+  modifyUser,
+  tokenCheck,
 };

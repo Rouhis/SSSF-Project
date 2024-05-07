@@ -38,7 +38,7 @@ type Query {
   keysByUser(user: ID!): [Key]
   keysByBranch(branch: ID!): [Key]
   keysOut(token: String!): [Key]
-  keysByOrganization(token:String!): [Key]
+  keysByOrganization(token: String!): [Key]
 }
 
 type Mutation {
@@ -47,4 +47,3 @@ type Mutation {
   deleteKey(id: ID!): KeyDeleteResponse
   modifyKey(id: ID!, key: KeyModify): KeyMessage
 }
-

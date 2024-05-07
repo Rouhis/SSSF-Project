@@ -28,7 +28,6 @@ export default {
       args: {branch: string},
     ): Promise<Key[]> => {
       const keys = await keyModel.find();
-      console.log('keys', keys);
       const filteredKeys = keys.filter(
         (key) => key.branch.toString() === args.branch,
       );
@@ -50,7 +49,6 @@ export default {
         throw new Error('Organization not found');
       }
       const keys = await keyModel.find();
-      console.log('keys', keys);
       const filteredKeys = [];
       for (const key of keys) {
         const branch = await branchModel.findById(key.branch);
@@ -89,6 +87,13 @@ export default {
         }
       }
       return filteredKeys;
+    },
+    keysByUser: async (
+      _parent: undefined,
+      args: {id: string},
+    ): Promise<Key[]> => {
+      const keys = await keyModel.find({user: args.id});
+      return keys;
     },
   },
   Mutation: {
@@ -152,6 +157,27 @@ export default {
       updatedKey.loaned = !updatedKey.loaned;
       updatedKey = await updatedKey.save();
       return {message: 'Key modified', key: updatedKey};
+    },
+    modifyKey: async (
+      _parent: undefined,
+      args: {key: Key; id: string},
+      context: MyContext,
+    ): Promise<{key: Key; message: string}> => {
+      if (
+        context.userdata?.role !== 'manager' &&
+        context.userdata?.role !== 'admin'
+      ) {
+        throw new GraphQLError('Unauthorized');
+      }
+      console.log('args', args);
+      const key = await keyModel.findById(args.id);
+      if (!key) {
+        throw new GraphQLError('Key not found');
+      }
+      key.key_name = args.key.key_name;
+      key.loaned = args.key.loaned || false;
+      await key.save();
+      return {message: 'Key modified', key: key};
     },
     deleteKey: async (
       _parent: undefined,

@@ -10,14 +10,16 @@ import {
   postEmployee,
   deleteUser,
   deleteUserAsAdmin,
+  modifyUser,
+  tokenCheck,
 } from './userFunctions';
 import mongoose, {ObjectId} from 'mongoose';
 import {getNotFound} from './testFunctions';
 import randomstring from 'randomstring';
-import jwt from 'jsonwebtoken';
 import {LoginResponse, OrganizationResponse} from '../src/types/MessageTypes';
 import {
   BranchTest,
+  KeyTest,
   Organization,
   OrganizationTest,
   UserTest,
@@ -26,10 +28,24 @@ import {
   deleteOrganization,
   getAllOrganizations,
   modifyOrganization,
+  organizationById,
+  organizationByName,
   postOrganization,
 } from './organizationFunctions';
 
-import {postBranch} from './branchFunctions';
+import {branchById, deleteBranch, postBranch} from './branchFunctions';
+import {
+  addKey,
+  deleteKey,
+  keyById,
+  keys,
+  keysByBranch,
+  keysByOrganization,
+  keysByUser,
+  keysOut,
+  loanKey,
+  modifyKey,
+} from './keyFunctions';
 describe('Testing graphql api', () => {
   beforeAll(async () => {
     await mongoose.connect(process.env.DATABASE_URL as string);
@@ -48,6 +64,8 @@ describe('Testing graphql api', () => {
   let userData: LoginResponse;
   let userData2: LoginResponse;
   let adminData: LoginResponse;
+  let branchData: BranchTest;
+  let keyData: KeyTest;
   let facilityManagerData: LoginResponse;
   let organizationData: OrganizationResponse;
   const testUser: UserTest = {
@@ -70,6 +88,10 @@ describe('Testing graphql api', () => {
     organization: 'Metropolia',
     password: 'testisalasana',
   };
+  const testUser4: UserTest = {
+    user_name: 'Test User ' + randomstring.generate(7),
+    password: 'salsisalasana',
+  };
 
   const facilityManager: UserTest = {
     user_name: 'Facility Manager ' + randomstring.generate(7),
@@ -90,6 +112,14 @@ describe('Testing graphql api', () => {
   const testBranch: BranchTest = {
     branch_name: 'Karamalmi' + randomstring.generate(5),
     organization: undefined,
+  };
+
+  const testKey: KeyTest = {
+    key_name: 'Key ' + randomstring.generate(5),
+    branch: undefined,
+  };
+  const testKey2: KeyTest = {
+    key_name: 'Key ' + randomstring.generate(5),
   };
 
   it('should create a user', async () => {
@@ -155,9 +185,15 @@ describe('Testing graphql api', () => {
     };
     facilityManagerData = await loginUser(app, vars);
   });
-
+  it('should modify user', async () => {
+    await modifyUser(app, testUser4, adminData.token);
+  });
   it('should create a employee (user)', async () => {
     await postEmployee(app, facilityManagerData.token, testUser3);
+  });
+
+  it('it should check user token', async () => {
+    await tokenCheck(app, facilityManagerData.token);
   });
 
   it('should create an organization', async () => {
@@ -172,6 +208,18 @@ describe('Testing graphql api', () => {
     await getAllOrganizations(app);
   });
 
+  it('should get organization by id', async () => {
+    await organizationById(app, organizationData.organization.id as string);
+  });
+
+  it('should get organization by name', async () => {
+    const organizationName = organizationData.organization?.organization_name;
+    if (organizationName) {
+      await organizationByName(app, organizationName);
+    } else {
+      throw new Error('Organization name is undefined');
+    }
+  });
   it('should modify organization', async () => {
     await modifyOrganization(
       app,
@@ -184,7 +232,56 @@ describe('Testing graphql api', () => {
     testBranch.organization = new mongoose.Types.ObjectId(
       organizationData.organization?.id,
     );
-    await postBranch(app, testBranch, adminData.token);
+    branchData = (await postBranch(
+      app,
+      testBranch,
+      adminData.token,
+    )) as BranchTest;
+    testKey.branch = new mongoose.Types.ObjectId(branchData.id);
+  });
+
+  it('should get branch by id', async () => {
+    await branchById(app, branchData.id);
+  });
+  it('should add a key', async () => {
+    keyData = (await addKey(
+      app,
+      testKey,
+      facilityManagerData.token,
+    )) as KeyTest;
+  });
+  it('should get all keys', async () => {
+    await keys(app);
+  });
+
+  it('should get key by id', async () => {
+    await keyById(app, keyData.id);
+  });
+
+  it('should loan a key', async () => {
+    await loanKey(app, keyData.id, userData.token);
+  });
+  it('should get keys loaned by user', async () => {
+    await keysByUser(app, userData.user.id);
+  });
+  it('should get keys that are out', async () => {
+    await keysOut(app, userData.token);
+  });
+  it('should get keys by organization', async () => {
+    await keysByOrganization(app, userData.token);
+  });
+  it('should get keys by branch', async () => {
+    await keysByBranch(app, branchData.id);
+  });
+  it('should modify key', async () => {
+    await modifyKey(app, keyData.id, facilityManagerData.token);
+  });
+
+  it('should delete key', async () => {
+    await deleteKey(app, keyData.id, facilityManagerData.token);
+  });
+  it('should delete branch', async () => {
+    await deleteBranch(app, branchData.id, adminData.token);
   });
   it('should delete organization', async () => {
     await deleteOrganization(

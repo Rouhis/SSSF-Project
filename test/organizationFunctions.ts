@@ -147,9 +147,76 @@ const deleteOrganization = (
   });
 };
 
+const organizationById = (url: string | Application, id: string) => {
+  return new Promise((resolve, reject) => {
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .send({
+        query: `
+        query Query($organizationById: ID!) {
+            organizationById(id: $organizationById) {
+              id
+              organization_name
+            }
+          }`,
+        variables: {
+          organizationById: id,
+        },
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log('organizationById', response.body);
+          const organization = response.body.data.organizationById;
+          expect(organization).toHaveProperty('id');
+          expect(organization).toHaveProperty('organization_name');
+          resolve(response.body.data.organizationById);
+        }
+      });
+  });
+};
+
+const organizationByName = (
+  url: string | Application,
+  organization_name: string,
+) => {
+  return new Promise((resolve, reject) => {
+    request(url)
+      .post('/graphql')
+      .set('Content-type', 'application/json')
+      .send({
+        query: `
+        query Query($organization_name: String!) {
+            organizationByName(organization_name: $organization_name) {
+              id
+              organization_name
+            }
+          }`,
+        variables: {
+          organization_name: organization_name,
+        },
+      })
+      .expect(200, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log('organizationByName', response.body);
+          const organization = response.body.data.organizationByName;
+          expect(organization).toHaveProperty('id');
+          expect(organization).toHaveProperty('organization_name');
+          resolve(response.body.data.organizationByName);
+        }
+      });
+  });
+};
+
 export {
   postOrganization,
   getAllOrganizations,
   modifyOrganization,
   deleteOrganization,
+  organizationById,
+  organizationByName,
 };
