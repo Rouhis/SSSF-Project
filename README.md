@@ -5,22 +5,28 @@ KeyApp is a user-friendly application designed to simplify and centralize key ma
 **Admin:**
 
 Centralized Control: The admin has ultimate authority within KeyApp. They can add new organizations, manage facility manager accounts, and configure access levels.
+
 Organization Management: Admins can create new organizations within KeyApp, allowing for easy scaling and multi-tenant functionality.
 
 **Facility Manager:**
-
 Branch & Key Management: Facility Managers can add new branches within their organization and manage key inventory for each branch.
+
 Enhanced Organization: Facility Managers contribute to a well-organized system by adding keys and associating them with specific branches.
+
 **Employee:**
-
 Simplified Borrowing & Returning: Employees can easily loan and return keys through a user-friendly interface. This streamlines access control and reduces administrative tasks.
-Improved Accountability: Employees maintain clear accountability for assigned keys, promoting responsible key usage. For example, Facility Managers can see what keys are late and message employees about that.
-**KeyApp Benefits:**
 
+Improved Accountability: Employees maintain clear accountability for assigned keys, promoting responsible key usage. For example, Facility Managers can see what keys are late and message employees about that.
+
+**KeyApp Benefits:**
 Increased Efficiency: Automates key management tasks, saving time and resources.
+
 Enhanced Security: Provides a centralized system for tracking and controlling key access.
+
 Improved Visibility: Offers real-time insights into key usage.
+
 Simplified Communication: Facilitates communication between employees and facility managers regarding key access needs.
+
 Tailored User Experience:  Each user type has a customized view within KeyApp, providing them with the functionalities most relevant to their role. This ensures a user-friendly and efficient experience for everyone involved.
 
 ## Table of contents
@@ -64,25 +70,43 @@ npm run test
 ![image](https://github.com/Rouhis/SSSF-Project/assets/103174848/e638b895-f7ec-448b-a8ff-32294da5d6b6)
 
 ## Features
+
 **Admins**
+
 Admins can create and delete organizations. Also, admins can create facility managers.
+
 **Facility managers**
+
 Facility managers can create employees, keys, and branches and also delete them.
+
 Facility managers can send messages to other users in their organization.
+
 Facility managers can change their name and password.
+
 **Employees**
+
 Employees can loan and return keys.
+
 Employees can send messages to other users in their organization.
+
 Employees can change their name and password.
+
 
 ## Technologies
 **Typescipt**
+
 **JavaScript**
+
 **GraphQL**
+
 **MongoDB**
+
 **React**
+
 **Vite**
+
 **Websocket**
+
 ## Demo
 [Link to demo](https://www.youtube.com/watch?v=uJKWJgMxc-c&ab_channel=Rouhis)
 
