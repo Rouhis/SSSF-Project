@@ -25,11 +25,67 @@ Tailored User Experience:  Each user type has a customized view within KeyApp, p
 
 ## Table of contents
 1. [Installation on local machine](#Installation)
-2. 
+2. [Usage](#Usage)
+3. [Technologies](#Technologies)
+4. [Demo](#Demo)
 
 ## Installation
 ### Servers
 This project uses three different servers and each server has its installation guide on their GitHub page.
-[Authorization server](https://github.com/Rouhis/SSSF-project-auth)
-[Websocket server](https://github.com/Rouhis/SSSF-Project-WS)
-[FrontEnd server](https://github.com/Rouhis/SSSF-Project-WS)
+1.[Authorization server](https://github.com/Rouhis/SSSF-project-auth)
+2.[Websocket server](https://github.com/Rouhis/SSSF-Project-WS)
+3.[FrontEnd server](https://github.com/Rouhis/SSSF-Project-WS)
+
+### Backend installation
+For backend installation clone this repo.
+Then install packages
+```bash
+npm install
+```
+.env file
+```bash
+NODE_ENV=development
+PORT=3000
+DATABASE_URL=mongoDB databaseurl
+JWT_SECRET=YOUR SECRET
+AUTH_URL=YOUR AUTH URL (if using auth server locally its localhost:3001)
+```
+For running the backend project
+```bash
+npm run dev
+```
+## Usage
+The project has a register button just for testing purposes the application admins are made straight to the database for security reasons and the register registers you as a Facility Manager. The idea about creating facility managers and employees is sending their password to the email of the one creating the user but this wasn't implemented in this stage of the project so the backend does send the temporary password that should be changed on the first login for security reasons to the client for the one creating the user to see. After registering an account it is recommended to change the user's role to admin from the database so you can create an organization based on the organization you added to the test account. Then you can create a facility manager for that organization and use that for testing.
+### Tests
+The application has tests that can be run
+```bash
+npm run test
+```
+![image](https://github.com/Rouhis/SSSF-Project/assets/103174848/e638b895-f7ec-448b-a8ff-32294da5d6b6)
+
+## Features
+**Admins**
+Admins can create and delete organizations. Also, admins can create facility managers.
+**Facility managers**
+Facility managers can create employees, keys, and branches and also delete them.
+Facility managers can send messages to other users in their organization.
+Facility managers can change their name and password.
+**Employees**
+Employees can loan and return keys.
+Employees can send messages to other users in their organization.
+Employees can change their name and password.
+
+## Technologies
+**Typescipt**
+**JavaScript**
+**GraphQL**
+**MongoDB**
+**React**
+**Vite**
+**Websocket**
+## Demo
+[Link to demo](https://www.youtube.com/watch?v=uJKWJgMxc-c&ab_channel=Rouhis)
+
+
+
+
