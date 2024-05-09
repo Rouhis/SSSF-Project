@@ -1,8 +1,29 @@
+/**
+ * This module provides resolvers for the `Branch` and `Query` types in a GraphQL schema.
+ *
+ * @module organizationResolver
+ */
 import {GraphQLError} from 'graphql';
 import {MyContext} from '../../types/MyContext';
 import {Branch, Organization} from '../../types/DBTypes';
 import organizationModel from '../models/organizationModel';
-
+/**
+ * The resolvers for the `Branch` and `Query` types.
+ *
+ * @property {Object} Branch - The resolver for the `Branch` type.
+ * @property {Function} Branch.organization - Returns the organization associated with a branch.
+ *
+ * @property {Object} Query - The resolver for the `Query` type.
+ * @property {Function} Query.organizations - Returns all organizations.
+ * @property {Function} Query.organizationById - Returns an organization by its ID.
+ * @property {Function} Query.organizationByName - Returns an organization by its name.
+ *
+ * The resolvers for mutations
+ * @property {Object} Mutation - The resolver for the `Mutation` type.
+ * @property {Function} Mutation.addOrganization - Adds a new organization.
+ * @property {Function} Mutation.modifyOrganization - Modifies an existing organization.
+ * @property {Function} Mutation.deleteOrganization - Deletes an organization.
+ */
 export default {
   Branch: {
     // Add this resolver for the Branch type

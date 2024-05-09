@@ -1,7 +1,30 @@
+/**
+ * This module provides resolvers for the `Key`,`Query` and `Mutation `types in a GraphQL schema.
+ *
+ * @module branchResolver
+ */
 import {GraphQLError} from 'graphql';
 import {MyContext} from '../../types/MyContext';
 import {Branch, Key} from '../../types/DBTypes';
 import branchModel from '../models/branchModel';
+/**
+ * Resolvers for branch queries and mutations.
+ *
+ * @property {Object} Key - The resolver for the `Key` type.
+ * @property {Function} Key.branch - Returns the branch associated with a key.
+ *
+ * Queries
+ * @property {Object} Query - The resolver for the `Query` type.
+ * @property {Function} Query.branches - Returns all branches.
+ * @property {Function} Query.branchById - Returns a branch by its ID.
+ * @property {Function} Query.branchByName - Returns a branch by its name.
+ * @property {Function} Query.branchesByOrganization - Returns all branches belonging to an organization.
+ *
+ * Mutations
+ * @property {Function} Mutation.addBranch - Adds a new branch.
+ * @property {Function} Mutation.modifyBranch - Modifies an existing branch.
+ * @property {Function} Mutation.deleteBranch - Deletes a branch.
+ */
 export default {
   Key: {
     branch: async (parent: Key): Promise<Branch> => {

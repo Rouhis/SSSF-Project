@@ -1,3 +1,8 @@
+/**
+ * This module provides resolvers for the `Query` type in a GraphQL schema.
+ *
+ * @module userResolver
+ */
 import {GraphQLError} from 'graphql';
 import {User, UserOutput} from '../../types/DBTypes';
 import fetchData from '../../functions/fetchData';
@@ -5,10 +10,27 @@ import {MessageResponse} from '../../types/MessageTypes';
 import {MyContext} from '../../types/MyContext';
 import * as Randomstring from 'randomstring';
 import jwt from 'jsonwebtoken';
-// TODO: create resolvers based on user.graphql
-// note: when updating or deleting a user don't send id to the auth server, it will get it from the token. So token needs to be sent with the request to the auth server
-// note2: when updating or deleting a user as admin, you need to send user id (dont delete admin btw) and also check if the user is an admin by checking the role from the user object form context
-
+/**
+ * The resolvers for the `Query` type.
+ *
+ * @property {Object} Query - The resolver for the `Query` type.
+ * @property {Function} Query.users - Returns all users.
+ * @property {Function} Query.usersByOrganization - Returns all users belonging to a specific organization.
+ * @property {Function} Query.userFromToken - Returns the user associated with the current authentication token.
+ * @property {Function} Query.userById - Returns a user by its ID.
+ * @property {Function} Query.checkToken - Checks if the token is valid.
+ *
+ * The resolvers for the `Mutation` type.
+ * @property {Object} Mutation - The resolver for the `Mutation` type.
+ * @property {Function} Mutation.registerTestUser - Registers a test user.
+ * @property {Function} Mutation.registerEmployee - Registers an employee.
+ * @property {Function} Mutation.registerFaciltyManager - Registers a facility manager.
+ * @property {Function} Mutation.login - Logs in a user.
+ * @property {Function} Mutation.updateUser - Updates the user.
+ * @property {Function} Mutation.updateUserAsAdmin - Updates the user as an admin.
+ * @property {Function} Mutation.deleteUser - Deletes the user.
+ * @property {Function} Mutation.deleteUserAsAdmin - Deletes the user as an admin.
+ */
 export default {
   Query: {
     users: async (): Promise<UserOutput[]> => {
@@ -48,7 +70,7 @@ export default {
       if (!context.userdata) {
         throw new GraphQLError('User not authenticated');
       }
-
+      console.log('context.userdata:', context.userdata.user);
       const user = await fetchData<User>(
         process.env.AUTH_URL + '/users/' + context.userdata.user._id,
         {
@@ -58,6 +80,7 @@ export default {
           },
         },
       );
+      console.log('user:', user);
       user.id = user._id;
       return user;
     },
@@ -356,12 +379,10 @@ export default {
         throw new GraphQLError('Auth URL not set in .env file');
       }
 
-      // Check if the user is an admin
       if (context.userdata?.role !== 'admin') {
         throw new GraphQLError('Only admins can delete other users');
       }
 
-      // Fetch the user before deleting
       const userResponse = await fetchData<{data: User}>(
         process.env.AUTH_URL + '/users/' + args.id,
         {

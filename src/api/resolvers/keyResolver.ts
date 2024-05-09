@@ -1,3 +1,8 @@
+/**
+ * This module provides resolvers for the `Query` and `Mutation` types in a GraphQL schema.
+ *
+ * @module keyResolver
+ */
 import {GraphQLError} from 'graphql';
 import {MyContext} from '../../types/MyContext';
 import {Key, User} from '../../types/DBTypes';
@@ -6,7 +11,22 @@ import fetchData from '../../functions/fetchData';
 import {checkToken} from '../checkToken';
 import organizationModel from '../models/organizationModel';
 import branchModel from '../models/branchModel';
-
+/**The resolvers for the `Query` type.
+ * @property {Object} Query - The resolver for the `Query` type.
+ * @property {Function} Query.keys - Returns all keys.
+ * @property {Function} Query.keyById - Returns a key by its ID.
+ * @property {Function} Query.keysByBranch - Returns all keys belonging to a branch.
+ * @property {Function} Query.keysByOrganization - Returns all keys belonging to an organization.
+ * @property {Function} Query.keysOut - Returns all keys that are currently loaned out.
+ * @property {Function} Query.keysByUser - Returns all keys loaned by a user.
+ * The resolvers for the `Mutation` type.
+ *
+ * @property {Object} Mutation - The resolver for the `Mutation` type.
+ * @property {Function} Mutation.addKey - Adds a new key.
+ * @property {Function} Mutation.loanKey - Loans a key to a user.
+ * @property {Function} Mutation.modifyKey - Modifies an existing key.
+ * @property {Function} Mutation.deleteKey - Deletes a key.
+ */
 export default {
   Query: {
     keys: async (): Promise<Key[]> => {
