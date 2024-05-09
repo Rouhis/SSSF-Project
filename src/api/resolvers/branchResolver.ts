@@ -24,6 +24,7 @@ import branchModel from '../models/branchModel';
  * @property {Function} Mutation.addBranch - Adds a new branch.
  * @property {Function} Mutation.modifyBranch - Modifies an existing branch.
  * @property {Function} Mutation.deleteBranch - Deletes a branch.
+ *
  */
 export default {
   Key: {
