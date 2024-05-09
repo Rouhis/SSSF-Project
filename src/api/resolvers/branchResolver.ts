@@ -7,6 +7,7 @@ import {GraphQLError} from 'graphql';
 import {MyContext} from '../../types/MyContext';
 import {Branch, Key} from '../../types/DBTypes';
 import branchModel from '../models/branchModel';
+import keyModel from '../models/keyModel';
 /**
  * Resolvers for branch queries and mutations.
  *
@@ -148,8 +149,13 @@ export default {
       ) {
         throw new GraphQLError('Unauthorized');
       }
-      await branchModel.findByIdAndDelete(args.id);
-      return {message: 'Branch deleted'};
+      const branch = await branchModel.findByIdAndDelete(args.id);
+      if (branch) {
+        await keyModel.deleteMany({branch: args.id});
+        return {message: 'Branch deleted'};
+      } else {
+        return {message: 'Branch not deleted'};
+      }
     },
   },
 };
