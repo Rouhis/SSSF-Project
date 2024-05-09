@@ -7,6 +7,7 @@ import {GraphQLError} from 'graphql';
 import {MyContext} from '../../types/MyContext';
 import {Branch, Organization} from '../../types/DBTypes';
 import organizationModel from '../models/organizationModel';
+import branchModel from '../models/branchModel';
 /**
  * The resolvers for the `Branch` and `Query` types.
  *
@@ -118,7 +119,10 @@ export default {
       }
       const organization = await organizationModel.findByIdAndDelete(args.id);
       if (organization) {
-        return {message: 'Organization deleted'};
+        // Delete all branches linked to the organization
+        await branchModel.deleteMany({organization: args.id});
+
+        return {message: 'Organization and linked branches deleted'};
       } else {
         return {message: 'Organization not deleted'};
       }
