@@ -24,7 +24,7 @@ Simplified Communication: Facilitates communication between employees and facili
 Tailored User Experience:  Each user type has a customized view within KeyApp, providing them with the functionalities most relevant to their role. This ensures a user-friendly and efficient experience for everyone involved.
 
 ## Table of contents
-1. [Installation on local machine] (#Installation)
+1. [Installation on local machine] (## Installation)
 
 
 ## Installation
