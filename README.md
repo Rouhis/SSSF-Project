@@ -14,7 +14,7 @@ Enhanced Organization: Facility Managers contribute to a well-organized system b
 **Employee:**
 
 Simplified Borrowing & Returning: Employees can easily loan and return keys through a user-friendly interface. This streamlines access control and reduces administrative tasks.
-Improved Accountability: Employees maintain clear accountability for assigned keys, promoting responsible key usage. For example Facility Managers can see what keys are late and message employees about that.
+Improved Accountability: Employees maintain clear accountability for assigned keys, promoting responsible key usage. For example, Facility Managers can see what keys are late and message employees about that.
 **KeyApp Benefits:**
 
 Increased Efficiency: Automates key management tasks, saving time and resources.
@@ -25,6 +25,11 @@ Tailored User Experience:  Each user type has a customized view within KeyApp, p
 
 ## Table of contents
 1. [Installation on local machine](#Installation)
-
+2. 
 
 ## Installation
+### Servers
+This project uses three different servers and each server has its installation guide on their GitHub page.
+[Authorization server](https://github.com/Rouhis/SSSF-project-auth)
+[Websocket server](https://github.com/Rouhis/SSSF-Project-WS)
+[FrontEnd server](https://github.com/Rouhis/SSSF-Project-WS)
