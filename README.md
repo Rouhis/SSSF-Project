@@ -35,6 +35,48 @@ Tailored User Experience:  Each user type has a customized view within KeyApp, p
 
 [FrontEnd](https://eeturo-key-app.azurewebsites.net/login)
 
+## Know for testing
+
+**Bugs**
+
+When logging in you get "acceess denied" but you can refresh the page to login.
+
+Can't see who sent you messages.
+
+**One way to test project for classmates and teachers**
+
+Logging as admin user you can see it from OMA.
+
+Create an organization and add a facility manager to it remember to copy password.
+
+Login as the facility manager you made.
+
+Add a branch to your organization from the organization tab.
+
+You can add keys and delete keys from the keys page.
+
+Create an employee from the employees page remember to copy password.
+
+You can change passwords of the facility managers you made and users from the settings tab.
+
+Login as user.
+
+Test loaning keys.
+
+You can also message the facility manager you made from the chat window.
+
+You need to have both clients open so facilitymanager and employee to send messages between them.
+
+When registering a new user from register button make sure you set organization as Metropolia or to something you have made.
+
+**Second way**
+
+Create a user from the register form to organization "Metropolia".
+
+Follow guide one but ignore the admin stuff.
+
+
+
 ## Table of contents
 1. [Installation on local machine](#Installation)
 2. [Usage](#Usage)
