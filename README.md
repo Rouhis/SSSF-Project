@@ -43,7 +43,7 @@ When logging in you get "acceess denied" but you can refresh the page to login.
 
 Can't see who sent you messages.
 
-**One way to test project for classmates and teachers**
+### One way to test project for classmates and teachers
 
 Logging as admin user you can see it from OMA.
 
@@ -69,7 +69,7 @@ You need to have both clients open so facilitymanager and employee to send messa
 
 When registering a new user from register button make sure you set organization as Metropolia or to something you have made.
 
-**Second way**
+### Second way
 
 Create a user from the register form to organization "Metropolia".
 
